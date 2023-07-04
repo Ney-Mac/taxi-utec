@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { StyleSheet, View, useColorScheme, TouchableOpacity } from "react-native";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import { MaterialIcons } from "@expo/vector-icons";
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { showMessage } from "react-native-flash-message";
 import * as Location from 'expo-location';
 import {
 	MenuButton,
 } from '../../components/index';
 import { MapContext } from "../../context/MapContext";
-import { Button } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 import { theme } from "../../core/theme";
 import lightStyle from '../../core/mapLightStyle.json';
 import darkStyle from '../../core/mapDarkStyle.json';
@@ -18,7 +18,6 @@ import { AuthContext } from '../../context/AuthContext'
 
 const Dashboard = ({ navigation }) => {
 	const { isLoading } = useContext(MapContext);
-	const [showDetail, setShowDetail] = useState(false);
 	const colorScheme = useColorScheme();
 	const [mapStyle, setMapStyle] = useState(lightStyle);
 	const [location, setLocation] = useState(null);
@@ -69,8 +68,12 @@ const Dashboard = ({ navigation }) => {
 		});
 	}
 
+	const focusOnUser = () => {
+		mapRef.current.animateToRegion(location, 1000);
+	}
+
 	return (
-		<TouchableOpacity activeOpacity={1} onPress={() => { setShowDetail(false) }}>
+		<TouchableOpacity activeOpacity={1} style={styles.container}>
 			<View style={styles.row}>
 				<MenuButton onPress={() => { navigation.openDrawer() }} />
 			</View>
@@ -78,32 +81,29 @@ const Dashboard = ({ navigation }) => {
 			{isLoading ?
 				<Spinner visible={isLoading} />
 				:
-				<MapView
-					style={styles.map}
-					showsUserLocation={true}
-					provider={PROVIDER_GOOGLE}
-					customMapStyle={mapStyle}
-					initialRegion={location}
-					ref={mapRef}
-				>
-					
-				</MapView>
+				<View style={styles.mapContainer}>
+					<MapView
+						style={styles.map}
+						provider={PROVIDER_GOOGLE}
+						customMapStyle={mapStyle}
+						initialRegion={location}
+						ref={mapRef}
+						showsUserLocation={true}
+					>
+					</MapView>
+					<TouchableOpacity style={styles.rowMyLocationIcon} onPress={() => { focusOnUser() }}>
+						<MaterialIcons
+							name="my-location"
+							size={32}
+							color={theme.colors.primary}
+						/>
+					</TouchableOpacity>
+				</View>
 			}
 
-			{showDetail && <TouchableOpacity activeOpacity={1} style={styles.markerDetail}>
-				<View style={styles.rowBtn}>
-					<Button
-						onPress={() => { setShowDetail(false) }}
-						icon={() => (
-							<Icon
-								name='close'
-								size={30}
-								color={theme.colors.primary}
-							/>
-						)}
-					/>
-				</View>
-			</TouchableOpacity>}
+			<View style={{ height: 80, width: '100%' }}>
+				<Text>Text</Text>
+			</View>
 
 		</TouchableOpacity>
 	);
@@ -111,13 +111,24 @@ const Dashboard = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	mapContainer: {
+		flex: 1,
+		width: '100%',
+		position: 'relative',
+	},
 	map: {
 		height: "100%",
 		width: "100%",
 	},
 	row: {
+		width: '100%',
 		zIndex: 10,
-		marginRight: 24
+		//marginRight: 24
 	},
 	rowBtn: {
 		height: 'auto',
@@ -125,6 +136,15 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'flex-end',
 		paddingTop: 4,
+	},
+	rowMyLocationIcon: {
+		zIndex: 10,
+		position: 'absolute',
+		bottom: 20,
+		right: 20,
+		backgroundColor: 'black',
+		borderRadius: 50,
+		padding: 12,
 	}
 });
 

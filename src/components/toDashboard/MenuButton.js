@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     button: {
         width: 'auto',
         position: 'absolute',
-        top: 20 + getStatusBarHeight(),
-        right: -10,
+        top: 10 + getStatusBarHeight(),
+        right: 10,
     }
 });
