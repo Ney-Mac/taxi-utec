@@ -1,0 +1,5 @@
+export { default as Dashboard } from './Dashboard'
+export { default as ResetUserData } from './ResetUserData'
+export { default as ChangeUserPassword } from './ChangeUserPassword'
+export { default as MyPointsScreen } from './MyPointsScreen'
+export { default as FeedBackScreen } from './FeedBackScreen'
